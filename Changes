@@ -4,3 +4,7 @@ Revision history for Perl extension Math::Snap.
     - original version; created by h2xs 1.21 with options
         -X Math::Snap
 
+0.02 Thu Dec 26
+    - fixed extensive bugs dealing with negative nunbers. Doubled size of
+      test suite with equvalent tests for negative number cases.
+    - fixed the odd typo

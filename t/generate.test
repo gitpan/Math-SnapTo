@@ -17,6 +17,11 @@ for (@nums) {
     print "ok( snap_basic($_,4), ", snap_basic($_,4), " );\n";
 }
 
+print "### Snap Basic, negative numbers\n\n";
+for (@nums) {
+    print "ok( snap_basic(-$_,4), ", - snap_basic($_,4), " );\n";
+}
+
 @nums = (
     9, 99, 999, 9999, 99999, 999999, 9999999,
     1, 11, 111, 1111, 11111, 111111, 1111111,
@@ -31,15 +36,31 @@ for (@nums) {
     print "ok( snap_sigfig($_,4), ", snap_sigfig($_,4), " );\n";
 }
 
+print "\n\n### Snap Sig Figs, negative numbers\n\n";
+for (@nums) {
+    print "ok( snap_sigfig(-$_,4), ", - snap_sigfig($_,4), " );\n";
+}
+
 @nums = ( 1..20 );
 print "\n\n### Snap Units 4\n\n";
 for (@nums) {
     print "ok( snap_units($_,4), ", snap_units($_, 4), " );\n";
 }
 
+@nums = ( 1..20 );
+print "\n\n### Snap Units 4, negative numbers\n\n";
+for (@nums) {
+    print "ok( snap_units(-$_,4), ", - snap_units($_, 4), " );\n";
+}
+
 print "\n\n### Snap Units 5\n\n";
 for (@nums) {
     print "ok( snap_units($_,5), ", snap_units($_, 5), " );\n";
+}
+
+print "\n\n### Snap Units 5, negative numbers\n\n";
+for (@nums) {
+    print "ok( snap_units(-$_,5), ", - snap_units($_, 5), " );\n";
 }
 
 @nums = ();
@@ -51,10 +72,26 @@ for (@nums) {
 }
 
 @nums = ();
+for ( my $i = 2; $i > 0; $i -= 0.1 ) { push @nums, $i }
+print "\n\n### Snap Units 0.25, negative numbers\n\n";
+for (@nums) {
+    $_ = snap_basic($_);
+    print "ok( snap_units(-$_,0.25), ", - snap_units($_, 0.25), " );\n";
+}
+
+@nums = ();
 for ( my $i = 2; $i > 0; $i -= 0.025 ) { push @nums, $i }
 print "\n\n### Snap Units 0.1\n\n";
 for (@nums) {
     $_ = snap_basic($_);
     print "ok( snap_units($_,0.1), ", snap_units($_, 0.1), " );\n";
+}
+
+@nums = ();
+for ( my $i = 2; $i > 0; $i -= 0.025 ) { push @nums, $i }
+print "\n\n### Snap Units 0.1, negative numbers\n\n";
+for (@nums) {
+    $_ = snap_basic($_);
+    print "ok( snap_units(-$_,0.1), ", - snap_units($_, 0.1), " );\n";
 }
 

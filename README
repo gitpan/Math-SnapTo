@@ -1,4 +1,4 @@
-Math/SnapTo version 0.01
+Math/SnapTo version 0.02
 ======================
 
 INSTALLATION
@@ -10,13 +10,17 @@ To install this module type the following:
    make test
    make install
 
+On win32 use nmake instead of make
+
 DEPENDENCIES
 
 None
 
 COPYRIGHT AND LICENCE
 
-Put the correct copyright and licence information here.
+This package is free software and is provided "as is" without express or
+implied warranty. It may be used, redistributed and/or modified under the
+same terms as Perl itself.
 
 Copyright (C) 2002 Dr James Freeman
 

@@ -50,7 +50,8 @@
 <HR>
 <H1><A NAME="description">DESCRIPTION</A></H1>
 <P>The Math::SnapTo module provides several methods to snap numeric values to
-desired values according to various criteria.</P>
+desired values according to various criteria. Positive or negative integers
+and floats are supported.</P>
 <P>
 <H2><A NAME="functions">FUNCTIONS</A></H2>
 <P>This module supplies three functions. None are exported by default so you
@@ -62,9 +63,7 @@ directory</P>
 <P>
 <H3><A NAME="snap_basic( [num], [accuracy] );">snap_basic( [NUM], [ACCURACY] );</A></H3>
 <P>Something that has always anoyed me is how float operations
-return 0.499999999998 or 5.00000000001 when the actual value is 0.5.
-The <CODE>snap_basic()</CODE> function 'fixes' these ugly numbers in the same way you
-tend to in your head.</P>
+return 0.499999999998 or 0.500000000001 when the actual value is 0.5.</P>
 <P>By default the approx sub will modify numbers so if we have a number
 like 0.499999945 with 6 9s or 0.50000012 with 6 0s the number will be
 rounded to 0.5.</P>

@@ -1,7 +1,7 @@
 package Math::SnapTo;
 
-#use strict;     # used in testing but not forced on you
-#use warnings;
+#use strict;     # used in testing but not forced on you if you do not
+#use warnings;   # want/require the overhead. call strict/warnings locally
 
 require Exporter;
 use Carp;
@@ -10,18 +10,21 @@ use vars qw( @ISA @EXPORT_OK $VERSION );
 @ISA = qw(Exporter);
 @EXPORT_OK = qw( snap_basic snap_sigfig snap_units );
 
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 sub snap_units {
     my ( $num, $units ) = @_;
     confess "Need units to snap to!" unless $units;
+    my $neg = $num < 0 ? 1 : 0;
+    $num = abs $num;
+    $units = abs $units;
     # integer case
     if ( $units == int $units ) {
         if ( my $remainder = $num % $units ) {
             $num -= $remainder;
             $num += $units if $remainder >= $units/2;
         }
-      return $num;
+      return  $neg ? - $num : $num;
     }
     # fractional case
     else {
@@ -29,16 +32,19 @@ sub snap_units {
         my $int = int ( $num * $factor );
         my $remainder = ( $num * $factor ) - $int;
         $int += 1 if $remainder >= 0.5;
-      return $int / $factor;
+        $num = $int / $factor;
+      return $neg ? - $num : $num;
     }
 }
 
 sub snap_sigfig {
     my ( $num, $sig_figs ) = @_;
     $sig_figs ||= 6;
+    my $neg = $num < 0 ? 1 : 0;
+    $num = abs $num;
     my $exp;
     # integer case
-    if ( $num =~ m/^(\d{$sig_figs})(\d*)$/ ) {
+    if ( $num =~ m/^[-+]?(\d{$sig_figs})(\d*)$/ ) {
         $num = $1 . ( $2 ? '0' x length $2 : '' );
         # round up if required
         if ( defined $2 and length $2 ) {
@@ -46,53 +52,58 @@ sub snap_sigfig {
             my $round = $2 >= $compare_to ? 10**length $2 : 0;
             $num += $round;
         }
-      return $num;
+      return $neg ? - $num : $num;
     }
     # float case
     elsif ( $num =~ m/^(\d*)\.(\d+)$/ and length $num > $sig_figs +1 ) {
         # make it an integer case and recurse
         my $exp = 10 ** length $2;
         my $int = $num * $exp;
+        $int = $neg ? - $int : $int;
       return snap_sigfig( $int, $sig_figs ) / $exp;
     }
     # default case
     else {
-      return $num;
+      return $neg ? - $num : $num;
     }
 }
 
 sub snap_basic {
     my ( $num, $accuracy ) = @_;
     $accuracy ||= 6;
+    my $neg = $num < 0 ? 1 : 0;
+    $num = abs $num;
     # 9s split across decimal point
     if ( $num =~ m/(\d*?)(9+)\.(9+)\d*/ and (defined $2 ? length $2 : 0)+( defined $3 ? length $3 : 0 ) >= $accuracy ) {
-      return int($num +1 );
+      return $neg ? - int($num +1 ) : int($num +1 );
     }
     # 9s after decimal point
     elsif ( $num =~ m/\d*\.(\d*?)(9{$accuracy,})\d*/ ) {
         my $pre = defined $1 ? length $1 : 0;
         my $exp = 10** ($pre + length $2);
-      return int(($num * $exp) +1 )/$exp;
+      return $neg ? - int(($num * $exp) +1 )/$exp : int(($num * $exp) +1 )/$exp;
     }
     # 9s before decimal point
     elsif ( $num =~ m/\d*?(9{$accuracy,})(\d*)\.?d*/ ) {
         my $exp = defined $2 ? length $2 : 0;
-      return $num += 10**$exp;
+      return $neg ? - ($num + 10**$exp) : $num + 10**$exp;
     }
     # 0s split across decimal point
     if ( $num =~ m/(\d*?)(0+)\.(0+)\d*/ and (defined $2 ? length $2 : 0)+( defined $3 ? length $3 : 0 ) >= $accuracy ) {
-      return $1 . $2;
+      return $neg ? "-$1$2" : $1.$2;
     }
     # 0s after decimal point
     elsif ( $num =~ m/(\d*)\.(\d*?)(0{$accuracy,})\d*/ ) {
-      return ( $1 ? $1 : '0' ) . ( $2 ? ".$2" : '' );
+        $num = ( $1 ? $1 : '0' ) . ( $2 ? ".$2" : '' );
+      return $neg ? - $num : $num;
     }
     # 0s before decimal point
     elsif ( $num =~ m/(\d*?)(0{$accuracy,})(\d*)\.?d*/ ) {
-        return ( $1 ? $1 : '' ) . ( $2 ? $2 : '' ) . ( $3 ? '0' x length $3 : '');
+        $num = ( $1 ? $1 : '' ) . ( $2 ? $2 : '' ) . ( $3 ? '0' x length $3 : '');
+      return $neg ? - $num : $num;
     }
     else {
-        return $num;
+      return $neg ? - $num : $num;
     }
 }
 
@@ -110,7 +121,8 @@ Math::Snap - Perl extension providing numeric snap-to functions
 =head1 DESCRIPTION
 
 The Math::SnapTo module provides several methods to snap numeric values to
-desired values according to various criteria.
+desired values according to various criteria. Positive or negative integers
+and floats are supported.
 
 =head2 FUNCTIONS
 
@@ -124,9 +136,7 @@ directory
 =head3 snap_basic( [NUM], [ACCURACY] );
 
 Something that has always anoyed me is how float operations
-return 0.499999999998 or 5.00000000001 when the actual value is 0.5.
-The snap_basic() function 'fixes' these ugly numbers in the same way you
-tend to in your head.
+return 0.499999999998 or 0.500000000001 when the actual value is 0.5.
 
 By default the approx sub will modify numbers so if we have a number
 like 0.499999945 with 6 9s or 0.50000012 with 6 0s the number will be
