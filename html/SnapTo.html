@@ -1,0 +1,125 @@
+<HTML>
+<HEAD>
+<TITLE>SnapTo.pm</TITLE>
+<LINK REL="stylesheet" HREF="../html/docs.css" TYPE="text/css">
+<LINK REV="made" HREF="mailto:">
+</HEAD>
+
+<BODY>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0 WIDTH=100%>
+<TR><TD CLASS=block VALIGN=MIDDLE WIDTH=100% BGCOLOR="#cccccc">
+<FONT SIZE=+1><STRONG><P CLASS=block>&nbsp;SnapTo.pm</P></STRONG></FONT>
+</TD></TR>
+</TABLE>
+
+<A NAME="__index__"></A>
+<!-- INDEX BEGIN -->
+
+<UL>
+
+    <LI><A HREF="#name">NAME</A></LI>
+    <LI><A HREF="#synopsis">SYNOPSIS</A></LI>
+    <LI><A HREF="#description">DESCRIPTION</A></LI>
+    <UL>
+
+        <LI><A HREF="#functions">FUNCTIONS</A></LI>
+        <UL>
+
+            <LI><A HREF="#snap_basic( [num], [accuracy] );">snap_basic( [NUM], [ACCURACY] );</A></LI>
+            <LI><A HREF="#snap_sigfig( [number], [significant_figures] )">snap_sigfig( [NUMBER], [SIGNIFICANT_FIGURES] )</A></LI>
+            <LI><A HREF="#snap_units( [number], [units] )">snap_units( [NUMBER], [UNITS] )</A></LI>
+        </UL>
+
+        <LI><A HREF="#export">EXPORT</A></LI>
+    </UL>
+
+    <LI><A HREF="#author">AUTHOR</A></LI>
+</UL>
+<!-- INDEX END -->
+
+<HR>
+<P>
+<H1><A NAME="name">NAME</A></H1>
+<P>Math::Snap - Perl extension providing numeric snap-to functions</P>
+<P>
+<HR>
+<H1><A NAME="synopsis">SYNOPSIS</A></H1>
+<PRE>
+  use Math::SnapTo qw( snap_basic snap_sigfig snap_units );</PRE>
+<P>
+<HR>
+<H1><A NAME="description">DESCRIPTION</A></H1>
+<P>The Math::SnapTo module provides several methods to snap numeric values to
+desired values according to various criteria.</P>
+<P>
+<H2><A NAME="functions">FUNCTIONS</A></H2>
+<P>This module supplies three functions. None are exported by default so you
+have to specify what you want in the use or use the fully quialified name.
+For a detailed overview of how the functions behave run snap.test in the ./t
+directory</P>
+<PRE>
+    $ perl snap.test | more</PRE>
+<P>
+<H3><A NAME="snap_basic( [num], [accuracy] );">snap_basic( [NUM], [ACCURACY] );</A></H3>
+<P>Something that has always anoyed me is how float operations
+return 0.499999999998 or 5.00000000001 when the actual value is 0.5.
+The <CODE>snap_basic()</CODE> function 'fixes' these ugly numbers in the same way you
+tend to in your head.</P>
+<P>By default the approx sub will modify numbers so if we have a number
+like 0.499999945 with 6 9s or 0.50000012 with 6 0s the number will be
+rounded to 0.5.</P>
+<P>The <CODE>snap_basic()</CODE> function also takes a second optional argument that specifies
+how many 0s or 9s in a row will trigger rounding. For want of a better term
+I call this the accuracy. The default is 6.</P>
+<PRE>
+    snap_basic($num, 7);  # will return 0.5 for 0.500000001 but 0.50000001 if
+                          # that is passed as it only has 6 zeros.</PRE>
+<P>It should be noted that this is largely a cosmetic function rather than an
+implementation of the IEEE 754 standard. Any sequence of (default 6) 0s or 9s
+will trigger the modification so these modifications will occur:</P>
+<PRE>
+    snap_basic(999999)   == 1000000;
+    snap_basic(0.999999) == 1;
+    snap_basic(999.999)  == 1000;</PRE>
+<P>Numbers that do not fulfill the requisite criteria are returned unchanged.
+For example 0.5000001 will not be rounded to 0.5 as it only has 5 0s.</P>
+<P>
+<H3><A NAME="snap_sigfig( [number], [significant_figures] )">snap_sigfig( [NUMBER], [SIGNIFICANT_FIGURES] )</A></H3>
+<P>The <CODE>snap_sigfig()</CODE> function returns its integer or float argument modified to
+the desired number of significant figures. If the SIGNIFICANT_FIGURES argument
+is not supplied a value of 6 is used. Appropriate rounding is performed.</P>
+<PRE>
+    snap_sigfig(999999)     == 1000000;
+    snap_sigfig(555555,4)   == 555600;
+    snap_sigfig(0.555555,4) == 0.5556;</PRE>
+<P>
+<H3><A NAME="snap_units( [number], [units] )">snap_units( [NUMBER], [UNITS] )</A></H3>
+<P>The <CODE>snap_units()</CODE> function returns its integer or float argument modified so
+that NUMBER % UNITS == 0. UNITS can be an integer or a float.
+Rounding up occurs if NUMBER % UNITS &gt;= UNITS / 2</P>
+<PRE>
+    snap_units(13,4)       == 12
+    snap_units(14,4)       == 16 ;
+    snap_units(15,4)       == 16 ;
+    snap_units(16,4)       == 16 ;
+    snap_units(17,4)       == 16 ;
+    snap_units(18,4)       == 20 ;
+    snap_units(0.75, 0.25) == 0.75;
+    snap_units(0.87, 0.25) == 0.75;
+    snap_units(0.88, 0.25) == 1;</PRE>
+<P>
+<H2><A NAME="export">EXPORT</A></H2>
+<P>None by default.</P>
+<P>
+<HR>
+<H1><A NAME="author">AUTHOR</A></H1>
+<P>Dr James Freeman, &lt;<A HREF="mailto:james.freeman@id3.org.uk">james.freeman@id3.org.uk</A>&gt;</P>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0 WIDTH=100%>
+<TR><TD CLASS=block VALIGN=MIDDLE WIDTH=100% BGCOLOR="#cccccc">
+<FONT SIZE=+1><STRONG><P CLASS=block>&nbsp;SnapTo.pm</P></STRONG></FONT>
+</TD></TR>
+</TABLE>
+
+</BODY>
+
+</HTML>

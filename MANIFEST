@@ -1,0 +1,11 @@
+MANIFEST
+Changes
+Makefile.PL
+README
+SnapTo.pm
+misc/make_manifest.pl
+t/generate.test
+t/snap.test
+t/snapto.t
+html/docs.css
+html/SnapTo.html

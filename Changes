@@ -1,0 +1,6 @@
+Revision history for Perl extension Math::Snap.
+
+0.01  Thu Dec 26 00:28:18 2002
+    - original version; created by h2xs 1.21 with options
+        -X Math::Snap
+
